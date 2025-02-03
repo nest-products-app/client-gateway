@@ -11,20 +11,18 @@ import {
 } from '@nestjs/common';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { catchError } from 'rxjs';
-import { ORDERS_SERVICE } from 'src/config/services';
+import { NATS_SERVICE } from 'src/config/services';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { OrderPaginationDto, StatusDto } from './dto';
 import { PaginationDto } from 'src/common';
 
 @Controller('orders')
 export class OrdersController {
-  constructor(
-    @Inject(ORDERS_SERVICE) private readonly ordersClient: ClientProxy,
-  ) {}
+  constructor(@Inject(NATS_SERVICE) private readonly client: ClientProxy) {}
 
   @Post()
   createOrder(@Body() createOrderDto: CreateOrderDto) {
-    return this.ordersClient.send({ cmd: 'create_order' }, createOrderDto).pipe(
+    return this.client.send({ cmd: 'create_order' }, createOrderDto).pipe(
       catchError((error) => {
         throw new RpcException(error);
       }),
@@ -33,7 +31,7 @@ export class OrdersController {
 
   @Get()
   findAll(@Query() orderPaginationDto: OrderPaginationDto) {
-    return this.ordersClient
+    return this.client
       .send({ cmd: 'find_all_orders' }, orderPaginationDto)
       .pipe(
         catchError((error) => {
@@ -44,7 +42,7 @@ export class OrdersController {
 
   @Get('id/:id')
   findOne(@Param('id', ParseUUIDPipe) id: string) {
-    return this.ordersClient.send({ cmd: 'find_one_order' }, { id }).pipe(
+    return this.client.send({ cmd: 'find_one_order' }, { id }).pipe(
       catchError((error) => {
         throw new RpcException(error);
       }),
@@ -56,7 +54,7 @@ export class OrdersController {
     @Param() statusDto: StatusDto,
     @Query() paginationDto: PaginationDto,
   ) {
-    return this.ordersClient
+    return this.client
       .send(
         { cmd: 'find_all_orders' },
         {
@@ -76,7 +74,7 @@ export class OrdersController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() statusDto: StatusDto,
   ) {
-    return this.ordersClient
+    return this.client
       .send(
         { cmd: 'change_order_status' },
         {
