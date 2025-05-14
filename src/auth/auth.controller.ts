@@ -31,6 +31,7 @@ export class AuthController {
     );
   }
 
+  // test comment
   @UseGuards(AuthGuard)
   @Get('verify')
   verifyToken(@User() user: CurrentUser, @Token() token: string) {
