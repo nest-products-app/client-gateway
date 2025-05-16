@@ -17,9 +17,9 @@ import { PaginationDto } from 'src/common';
 import { NATS_SERVICE } from 'src/config/services';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { AuthGuard } from 'src/auth/guards/auth.guard';
+// import { AuthGuard } from 'src/auth/guards/auth.guard';
 
-@UseGuards(AuthGuard)
+// @UseGuards(AuthGuard) JUST FOR K8S TEST
 @Controller('products')
 export class ProductsController {
   constructor(@Inject(NATS_SERVICE) private readonly client: ClientProxy) {}
